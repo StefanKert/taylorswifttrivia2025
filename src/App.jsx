@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 const questions = [
@@ -37,6 +37,17 @@ function App() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
 
+  const handleNextQuestion = useCallback(() => {
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1);
+      setTimeLeft(15);
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+    } else {
+      setShowScore(true);
+    }
+  }, [currentQuestion]);
+
   useEffect(() => {
     if (!showScore && timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -44,7 +55,7 @@ function App() {
     } else if (timeLeft === 0) {
       handleNextQuestion();
     }
-  }, [timeLeft, showScore]);
+  }, [timeLeft, showScore, handleNextQuestion]);
 
   const handleAnswerClick = (selectedOption) => {
     setSelectedAnswer(selectedOption);
@@ -56,17 +67,6 @@ function App() {
     setTimeout(() => {
       handleNextQuestion();
     }, 1000);
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
-      setTimeLeft(15);
-      setSelectedAnswer(null);
-      setIsCorrect(null);
-    } else {
-      setShowScore(true);
-    }
   };
 
   const resetQuiz = () => {
